@@ -148,7 +148,7 @@ class SummaryReader(Iterable):
                         ])
                     )
                 except EventReadingError:
-                    if not self._stop_on_error:
+                    if self._stop_on_error:
                         raise
                     else:
                         continue
