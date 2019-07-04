@@ -45,7 +45,7 @@ The supported types are:
 
 Other types will be added later (maybe).
 
-Note that if you subscribes both on `image` and `image_raw`, any particular image event will produce two yields.
+Note that if you are subscribed both on `image` and `image_raw`, any particular image event will produce two yields.
 
 There is also an argument `stop_on_error` that is False by default.
 
