@@ -24,7 +24,6 @@ setuptools.setup(
         'numpy>1.15.4',
         'imageio>=2.5.0',
         'tensorboard>=1.13.1',
-        'matplotlib>=3.0.3',
         'crc32c>=1.7',
     ],
     tests_require=[
