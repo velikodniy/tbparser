@@ -12,8 +12,7 @@ def get_version():
     return version
 
 
-with open(str(Path(__file__).parent / 'README.md'), 'r') as f:
-    long_description = f.read()
+long_description = (Path(__file__).parent / 'README.md').read_text()
 
 setuptools.setup(
     name='tbparser',
