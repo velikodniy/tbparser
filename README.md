@@ -33,7 +33,7 @@ reader = SummaryReader(logdir, tag_filter=['loss'])
 In this case the reader will yield only events with tag `'loss'`.
 
 By default reader yields only scalar values.
-It's because the argument `types` is set to ['scalar'].
+It's because the argument `types` is set to `['scalar']`.
 You can list all the types you interested in.
 All the unlisted types will be ignored.
 
@@ -56,7 +56,8 @@ while item in reader:
   do_something(item)
 ```
 
-`item` is an instance of `tbparser.summary_reader.SummaryItem`. It is a named tuple actually with the fillowing keys:
+`item` is an instance of `tbparser.summary_reader.SummaryItem`.
+It is a named tuple actually with the following keys:
 
 - `tag`,
 - `step`,
