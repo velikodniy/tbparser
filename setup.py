@@ -1,12 +1,14 @@
 import setuptools
 from pathlib import Path
 
+from tbparser.version import __version__
+
 with open(str(Path(__file__).parent / 'README.md'), 'r') as f:
     long_description = f.read()
 
 setuptools.setup(
     name='tbparser',
-    version='0.1.0',
+    version=__version__,
     author='Vadim Velicodnii',
     author_email='vadim@velikodniy.name',
     description='Parse tensorboard logs',
