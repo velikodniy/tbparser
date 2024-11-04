@@ -1,10 +1,11 @@
-import setuptools
 from pathlib import Path
+
+import setuptools
 
 
 def get_version():
     version_str = (Path(__file__).parent / "tbparser/version.py").read_text()
-    exec(version_str)
+    exec(version_str)  # noqa: S102
     try:
         version = str(locals()["__version__"])
     except KeyError:

@@ -1,7 +1,10 @@
-import struct
-from crc32c import crc32 as crc32c
-from typing import Iterable, BinaryIO, Optional
+from __future__ import annotations
 
+from collections.abc import Iterable
+import struct
+from typing import BinaryIO
+
+from crc32c import crc32 as crc32c
 from tensorboard.compat.proto.event_pb2 import Event
 
 
@@ -19,8 +22,6 @@ class EventReadingError(Exception):
     An exception that correspond to an event file reading error
     """
 
-    pass
-
 
 class EventsFileReader(Iterable):
     """
@@ -35,7 +36,7 @@ class EventsFileReader(Iterable):
         """
         self._events_file = events_file
 
-    def _read(self, size: int) -> Optional[bytes]:
+    def _read(self, size: int) -> bytes | None:
         """
         Read exactly next `size` bytes from the current stream.
 
@@ -53,7 +54,7 @@ class EventsFileReader(Iterable):
             return None
         return data
 
-    def _read_and_check(self, size: int) -> Optional[bytes]:
+    def _read_and_check(self, size: int) -> bytes | None:
         """
         Read and check data described by a format string.
 
@@ -69,11 +70,7 @@ class EventsFileReader(Iterable):
         checksum = struct.unpack("I", self._read(checksum_size))[0]
         checksum_computed = _masked_crc32c(data)
         if checksum != checksum_computed:
-            raise EventReadingError(
-                "Invalid checksum. {checksum} != {crc32}".format(
-                    checksum=checksum, crc32=checksum_computed
-                )
-            )
+            raise EventReadingError(f"Invalid checksum. {checksum} != {checksum_computed}")
         return data
 
     def __iter__(self) -> Event:

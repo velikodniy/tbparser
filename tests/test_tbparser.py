@@ -1,12 +1,14 @@
 from io import BytesIO
 from pathlib import Path
+from unittest.mock import patch
 
 import imageio
 import numpy as np
 import pytest
-from unittest.mock import patch
 
-from tbparser import EventsFileReader, EventReadingError, SummaryReader
+from tbparser import EventReadingError
+from tbparser import EventsFileReader
+from tbparser import SummaryReader
 
 
 def _get_test_data():
@@ -17,7 +19,7 @@ def _get_test_data():
     x     1.0          1
     y    -1.0          1
     x     2.0          2
-    z     zeros 2×2×3  1
+    z     zeros 2x2x3  1
 
     The first event is empty with wall_time = 1557489465
 
@@ -79,9 +81,9 @@ def test_events_reader_successful():
                 assert event.summary.value[0].simple_value == event_raw["value"]
             elif event_raw["type"] == "image":
                 assert event.summary.value[0].HasField("image")
-                assert event.summary.value[0].image.height == 2
-                assert event.summary.value[0].image.width == 2
-                assert event.summary.value[0].image.colorspace == 3
+                assert event.summary.value[0].image.height == 2  # noqa: PLR2004
+                assert event.summary.value[0].image.width == 2  # noqa: PLR2004
+                assert event.summary.value[0].image.colorspace == 3  # noqa: PLR2004
                 _compare_image_data(
                     event.summary.value[0].image.encoded_image_string,
                     event_raw["value"],
@@ -118,12 +120,13 @@ def test_events_reader_unexpected_end():
 
 
 def _open(path, mode):
+    del path, mode  # unused
     data, _ = _get_test_data()
     return BytesIO(data)
 
 
-@patch("pathlib.Path.glob", lambda s, p: [Path("1"), Path("2")])
-@patch("pathlib.Path.is_file", lambda s: True)
+@patch("pathlib.Path.glob", lambda _s, _p: [Path("1"), Path("2")])
+@patch("pathlib.Path.is_file", lambda _s: True)
 @patch("builtins.open", _open)
 def test_summary_reader_iterate():
     reader = SummaryReader("logs", types=["scalar", "image"])
@@ -140,8 +143,8 @@ def test_summary_reader_iterate():
         assert np.all(item.value == event_raw["value"])
 
 
-@patch("pathlib.Path.glob", lambda s, p: [Path("1"), Path("2")])
-@patch("pathlib.Path.is_file", lambda s: True)
+@patch("pathlib.Path.glob", lambda _s, _p: [Path("1"), Path("2")])
+@patch("pathlib.Path.is_file", lambda _s: True)
 @patch("builtins.open", _open)
 def test_summary_reader_filter():
     tags = ["x", "z"]
@@ -160,8 +163,8 @@ def test_summary_reader_filter():
         assert np.all(item.value == event_raw["value"])
 
 
-@patch("pathlib.Path.glob", lambda s, p: [Path("1"), Path("2")])
-@patch("pathlib.Path.is_file", lambda s: True)
+@patch("pathlib.Path.glob", lambda _s, _p: [Path("1"), Path("2")])
+@patch("pathlib.Path.is_file", lambda _s: True)
 @patch("builtins.open", _open)
 def test_summary_reader_filter_scalars():
     types = ["scalar"]
@@ -180,5 +183,5 @@ def test_summary_reader_filter_scalars():
 
 
 def test_summary_reader_invalid_type():
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Invalid type name"):
         SummaryReader(".", types=["unknown-type"])
