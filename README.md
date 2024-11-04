@@ -1,4 +1,4 @@
-# tbparser [![Build Status](https://travis-ci.org/velikodniy/tbparser.svg?branch=master)](https://travis-ci.org/velikodniy/tbparser)
+# tbparser
 
 A simple library for parsing Tensorboard logs.
 
