@@ -3,6 +3,7 @@ from __future__ import annotations
 from collections.abc import Iterable
 from collections.abc import Iterator
 from pathlib import Path
+from typing import Any
 from typing import NamedTuple
 from typing import TYPE_CHECKING
 
@@ -15,7 +16,12 @@ if TYPE_CHECKING:
     import numpy as np
 
 
-SummaryItem = NamedTuple("SummaryItem", ["tag", "step", "wall_time", "value", "type"])
+class SummaryItem(NamedTuple):
+    tag: str
+    step: int
+    wall_time: Any
+    value: Any
+    type: str
 
 
 def _get_scalar(value) -> np.ndarray | None:
