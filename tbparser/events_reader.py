@@ -6,18 +6,19 @@ from tensorboard.compat.proto.event_pb2 import Event
 
 
 def _u32(x):
-    return x & 0xffffffff
+    return x & 0xFFFFFFFF
 
 
 def _masked_crc32c(data):
     x = _u32(crc32c(data))
-    return _u32(((x >> 15) | _u32(x << 17)) + 0xa282ead8)
+    return _u32(((x >> 15) | _u32(x << 17)) + 0xA282EAD8)
 
 
 class EventReadingError(Exception):
     """
     An exception that correspond to an event file reading error
     """
+
     pass
 
 
@@ -45,13 +46,9 @@ class EventsFileReader(Iterable):
         """
         data = self._events_file.read(size)
         if data is None:
-            raise NotImplementedError(
-                'Reading of a stream in non-blocking mode'
-            )
+            raise NotImplementedError("Reading of a stream in non-blocking mode")
         if 0 < len(data) < size:
-            raise EventReadingError(
-                'The size of read data is less than requested size'
-            )
+            raise EventReadingError("The size of read data is less than requested size")
         if len(data) == 0:
             return None
         return data
@@ -68,12 +65,12 @@ class EventsFileReader(Iterable):
         data = self._read(size)
         if data is None:
             return None
-        checksum_size = struct.calcsize('I')
-        checksum = struct.unpack('I', self._read(checksum_size))[0]
+        checksum_size = struct.calcsize("I")
+        checksum = struct.unpack("I", self._read(checksum_size))[0]
         checksum_computed = _masked_crc32c(data)
         if checksum != checksum_computed:
             raise EventReadingError(
-                'Invalid checksum. {checksum} != {crc32}'.format(
+                "Invalid checksum. {checksum} != {crc32}".format(
                     checksum=checksum, crc32=checksum_computed
                 )
             )
@@ -88,14 +85,14 @@ class EventsFileReader(Iterable):
         :except: EventReadingError on reading error.
         """
         while True:
-            header_size = struct.calcsize('Q')
+            header_size = struct.calcsize("Q")
             header = self._read_and_check(header_size)
             if header is None:
                 break
-            event_size = struct.unpack('Q', header)[0]
+            event_size = struct.unpack("Q", header)[0]
             event_raw = self._read_and_check(event_size)
             if event_raw is None:
-                raise EventReadingError('Unexpected end of events file')
+                raise EventReadingError("Unexpected end of events file")
             event = Event()
             event.ParseFromString(event_raw)
             yield event

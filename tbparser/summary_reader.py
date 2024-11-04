@@ -8,9 +8,7 @@ import numpy as np
 
 from tbparser.events_reader import EventReadingError, EventsFileReader
 
-SummaryItem = namedtuple(
-    'SummaryItem', ['tag', 'step', 'wall_time', 'value', 'type']
-)
+SummaryItem = namedtuple("SummaryItem", ["tag", "step", "wall_time", "value", "type"])
 
 
 def _get_scalar(value) -> Optional[np.ndarray]:
@@ -19,7 +17,7 @@ def _get_scalar(value) -> Optional[np.ndarray]:
     :param value: A value field of an event
     :return: Decoded scalar
     """
-    if value.HasField('simple_value'):
+    if value.HasField("simple_value"):
         return value.simple_value
     return None
 
@@ -30,7 +28,7 @@ def _get_image(value) -> Optional[np.ndarray]:
     :param value: A value field of an event
     :return: Decoded image
     """
-    if value.HasField('image'):
+    if value.HasField("image"):
         encoded_image = value.image.encoded_image_string
         data = imageio.imread(encoded_image)
         return data
@@ -43,7 +41,7 @@ def _get_image_raw(value) -> Optional[np.ndarray]:
     :param value: A value field of an event
     :return: Raw image data
     """
-    if value.HasField('image'):
+    if value.HasField("image"):
         return value.image.encoded_image_string
     return None
 
@@ -55,17 +53,17 @@ class SummaryReader(Iterable):
     """
 
     _DECODERS = {
-        'scalar': _get_scalar,
-        'image': _get_image,
-        'image_raw': _get_image_raw,
+        "scalar": _get_scalar,
+        "image": _get_image,
+        "image_raw": _get_image_raw,
     }
 
     def __init__(
-            self,
-            logdir: Union[str, Path],
-            tag_filter: Optional[Iterable] = None,
-            types: Iterable = ('scalar',),
-            stop_on_error: bool = False
+        self,
+        logdir: Union[str, Path],
+        tag_filter: Optional[Iterable] = None,
+        types: Iterable = ("scalar",),
+        stop_on_error: bool = False,
     ):
         """
         Initalize new summary reader
@@ -85,10 +83,8 @@ class SummaryReader(Iterable):
     def _check_type_names(self):
         if self._types is None:
             return
-        if not all(
-                type_name in self._DECODERS.keys() for type_name in self._types
-        ):
-            raise ValueError('Invalid type name')
+        if not all(type_name in self._DECODERS.keys() for type_name in self._types):
+            raise ValueError("Invalid type name")
 
     def _decode_events(self, events: Iterable) -> Optional[SummaryItem]:
         """
@@ -99,7 +95,7 @@ class SummaryReader(Iterable):
         """
 
         for event in events:
-            if not event.HasField('summary'):
+            if not event.HasField("summary"):
                 yield None
             step = event.step
             wall_time = event.wall_time
@@ -114,7 +110,7 @@ class SummaryReader(Iterable):
                             step=step,
                             wall_time=wall_time,
                             value=data,
-                            type=value_type
+                            type=value_type,
                         )
                 else:
                     yield None
@@ -135,17 +131,16 @@ class SummaryReader(Iterable):
         Iterate over events in all the files in the current logdir
         :return: A generator with `SummaryItem` objects
         """
-        log_files = sorted(f for f in self._logdir.glob('*') if f.is_file())
+        log_files = sorted(f for f in self._logdir.glob("*") if f.is_file())
         for file_path in log_files:
-            with open(file_path, 'rb') as f:
+            with open(file_path, "rb") as f:
                 reader = EventsFileReader(f)
                 try:
                     yield from (
-                        item for item in self._decode_events(reader)
-                        if item is not None and all([
-                            self._check_tag(item.tag),
-                            item.type in self._types
-                        ])
+                        item
+                        for item in self._decode_events(reader)
+                        if item is not None
+                        and all([self._check_tag(item.tag), item.type in self._types])
                     )
                 except EventReadingError:
                     if self._stop_on_error:
