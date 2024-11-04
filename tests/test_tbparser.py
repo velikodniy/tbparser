@@ -127,7 +127,7 @@ def _open(path, mode):
 
 @patch("pathlib.Path.glob", lambda _s, _p: [Path("1"), Path("2")])
 @patch("pathlib.Path.is_file", lambda _s: True)
-@patch("builtins.open", _open)
+@patch("pathlib.Path.open", _open)
 def test_summary_reader_iterate():
     reader = SummaryReader("logs", types=["scalar", "image"])
     _, data_raw = _get_test_data()
@@ -145,7 +145,7 @@ def test_summary_reader_iterate():
 
 @patch("pathlib.Path.glob", lambda _s, _p: [Path("1"), Path("2")])
 @patch("pathlib.Path.is_file", lambda _s: True)
-@patch("builtins.open", _open)
+@patch("pathlib.Path.open", _open)
 def test_summary_reader_filter():
     tags = ["x", "z"]
     reader = SummaryReader("logs", tag_filter=tags, types=["scalar", "image"])
@@ -165,7 +165,7 @@ def test_summary_reader_filter():
 
 @patch("pathlib.Path.glob", lambda _s, _p: [Path("1"), Path("2")])
 @patch("pathlib.Path.is_file", lambda _s: True)
-@patch("builtins.open", _open)
+@patch("pathlib.Path.open", _open)
 def test_summary_reader_filter_scalars():
     types = ["scalar"]
     reader = SummaryReader("logs", types=types)
