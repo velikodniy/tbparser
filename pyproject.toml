@@ -38,6 +38,10 @@ Issues = "https://github.com/velikodniy/tbparser/issues"
 [tool.hatch.version]
 path = "tbparser/version.py"
 
+[[tool.hatch.envs.hatch-test.matrix]]
+dependencies = ["pytest"]
+python = ["3.9", "3.10", "3.11", "3.12", "3.13"]
+
 [tool.hatch.envs.default]
 python = "3.9"
 type = "virtual"
