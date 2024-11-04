@@ -1,3 +1,60 @@
+[build-system]
+build-backend = "hatchling.build"
+requires = ["hatchling"]
+
+[project]
+name = "tbparser"
+description = "A Tensorboard log parser"
+readme = { file = "README.md", content-type = "text/markdown" }
+license = { file = "LICENSE" }
+keywords = ["tensorboard"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Operating System :: OS Independent",
+]
+authors = [{ name = "Vadim Velicodnii", email = "vadim@velikodniy.name" }]
+requires-python = ">= 3.9"
+dependencies = [
+    "numpy>1.15.4",
+    "imageio>=2.5.0",
+    "tensorboard>=1.13.1",
+    "crc32c>=1.7",
+]
+dynamic = ["version"]
+
+[project.urls]
+Homepage = "https://github.com/velikodniy/tbparser"
+Repository = "https://github.com/velikodniy/tbparser.git"
+Issues = "https://github.com/velikodniy/tbparser/issues"
+
+[tool.hatch.version]
+path = "tbparser/version.py"
+
+[tool.hatch.envs.default]
+python = "3.9"
+type = "virtual"
+dependencies = ["pytest", "pyright"]
+
+[tool.pytest.ini_options]
+addopts = "--doctest-modules"
+doctest_optionflags = [
+    "NORMALIZE_WHITESPACE",
+    "IGNORE_EXCEPTION_DETAIL",
+    "NUMBER",
+]
+minversion = "7.0"
+
+[tool.pyright]
+include = ["tbparser", "tests"]
+
 [tool.ruff]
 line-length = 120
 target-version = "py39"
@@ -5,13 +62,13 @@ target-version = "py39"
 [tool.ruff.lint]
 select = ["ALL"]
 ignore = [
-    "D", # missing docstrings and formatting
-    "ANN", # missing type annotations
-    "COM", # trailing commas
-    "CPY", # missing copyright notice
+    "D",      # missing docstrings and formatting
+    "ANN",    # missing type annotations
+    "COM",    # trailing commas
+    "CPY",    # missing copyright notice
     "ISC001", # don't check for implicitly concatenated strings
-    "FBT", # bool-typed positional arguments
-    "EM", # exceptions must not use string literals
+    "FBT",    # bool-typed positional arguments
+    "EM",     # exceptions must not use string literals
     "TRY003", # long messages outside the exception class
 ]
 
